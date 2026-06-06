@@ -116,3 +116,24 @@ label{
     font-weight:bold;
     color:#8f6b5a;
 }
+
+@media (max-width:768px){
+
+    body{
+        padding:20px;
+    }
+
+    .login-card,
+    .register-card{
+        width:100%;
+        padding:25px;
+    }
+
+    input,
+    textarea,
+    button{
+        width:100%;
+        box-sizing:border-box;
+    }
+
+}
