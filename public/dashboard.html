@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+<div class="top-bar">
+    <button
+    class="logout-btn"
+    onclick="logout()">
+        Logout
+    </button>
+</div>
+
+<div class="card">
+
+
+<h1 id="welcome"></h1>
+
+<p>Remaining Minutes</p>
+
+<div
+id="minutes"
+class="minutes">
+</div>
+
+<p class="last-session">
+
+    Last Session:
+    <span id="lastDate"></span>
+
+    <br><br>
+
+    Minutes Used:
+    <span id="lastMinutes"></span>
+
+</p>
+
+</div>
+
+<div class="card">
+
+
+<h2>Choose Session Length</h2>
+
+<div class="session-buttons">
+
+    <button onclick="selectMinutes(3)">3</button>
+    <button onclick="selectMinutes(6)">6</button>
+    <button onclick="selectMinutes(9)">9</button>
+    <button onclick="selectMinutes(12)">12</button>
+    <button onclick="selectMinutes(15)">15</button>
+
+</div>
+
+<input
+id="customMinutes"
+type="number"
+placeholder="Custom Minutes">
+
+<button
+class="confirm-btn"
+onclick="confirmSession()">
+Start Session
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Book Appointment</h2>
+
+<p>
+Book facials, brows, lashes,
+skin treatments and more.
+</p>
+
+<button class="confirm-btn" onclick="openBooksy()">
+    Open Booksy
+</button>
+
+
+</div>
+
+<div class="card">
+
+
+<h2>Leave A Review</h2>
+
+<p>
+    Tell us about your experience.
+</p>
+
+<button class="confirm-btn">
+    Leave Review
+</button>
+
+
+</div>
+
+<script>
+
+
+
+const user = JSON.parse(
+    localStorage.getItem("user")
+);
+
+if(!user){
+
+    window.location.href =
+    "/login.html";
+
+}
+
+document.getElementById("minutes")
+.innerText =
+user.minutes;
+
+document.getElementById("welcome")
+.innerText =
+"Welcome Back " +
+user.name +
+" 👋";
+
+document.getElementById(
+    "lastDate"
+).innerText =
+user.lastAppointment || "Never";
+
+document.getElementById(
+    "lastMinutes"
+).innerText =
+user.lastAppointmentMinutes || 0;
+
+let selectedMinutes = 0;
+
+function selectMinutes(minutes){
+
+    selectedMinutes = minutes;
+
+    document.getElementById(
+        "customMinutes"
+    ).value = minutes;
+
+}
+
+function confirmSession(){
+
+    const customValue = parseInt(
+        document.getElementById(
+            "customMinutes"
+        ).value
+    );
+
+    const minutesToUse =
+    customValue || selectedMinutes;
+
+    if(!minutesToUse){
+
+        alert(
+            "Please select a session length."
+        );
+
+        return;
+
+    }
+
+    if(minutesToUse > user.minutes){
+
+        alert(
+            "Not enough minutes remaining."
+        );
+
+        return;
+
+    }
+
+    fetch("/use-session",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            id:user.id,
+            minutes:minutesToUse
+
+        })
+
+    })
+
+    .then(res=>res.json())
+
+    .then(updatedUser=>{
+
+    user.minutes =
+        updatedUser.minutes;
+
+        user.lastAppointment =
+        updatedUser.lastAppointment;
+
+        user.lastAppointmentMinutes =
+        updatedUser.lastAppointmentMinutes;
+
+        localStorage.setItem(
+            "user",
+            JSON.stringify(user)
+        );
+
+        document.getElementById(
+            "minutes"
+        ).innerText =
+        updatedUser.minutes;
+
+        alert(
+            "Session Started!"
+        );
+
+        document.getElementById(
+            "lastDate"
+        ).innerText =
+        updatedUser.lastAppointment;
+
+        document.getElementById(
+            "lastMinutes"
+        ).innerText =
+        updatedUser.lastAppointmentMinutes;
+
+            });
+
+}
+
+function logout(){
+
+    localStorage.removeItem(
+        "user"
+    );
+
+    window.location.href =
+    "/login.html";
+
+}
+
+function openBooksy(){
+
+    window.location.href =
+    "https://booksy.com/en-gb/28692_donna-williamson-skinn-studio_brows-lashes_1405588_penistone#ba_s=seo";
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "test",
+    "email": "123@test.com",
+    "password": "1234",
+    "minutes": 0,
+    "role": "client",
+    "notes": "Test",
+    "lastAppointment": "Never",
+    "lastAppointmentMinutes": 0
+  },
+  {
+    "id": 2,
+    "name": "admin",
+    "email": "123@admin.com",
+    "password": "admin123",
+    "minutes": 0,
+    "role": "admin",
+    "notes": "Test",
+    "lastAppointment": "Never",
+    "lastAppointmentMinutes": 0
+  },
+  {
+    "id": 1780701408462,
+    "name": "test2",
+    "email": "test2@test.com",
+    "password": "1234",
+    "minutes": 999982,
+    "role": "client",
+    "notes": "Test",
+    "lastAppointment": "06/06/2026",
+    "lastAppointmentMinutes": 15
+  },
+  {
+    "id": 1780746624169,
+    "name": "test3",
+    "email": "test3@test.com",
+    "password": "1234",
+    "minutes": 0,
+    "role": "client",
+    "notes": "Test",
+    "lastAppointment": "Never",
+    "lastAppointmentMinutes": 0
+  },
+  {
+    "id": 1780747853047,
+    "name": "allergy test",
+    "email": "test4@test.com",
+    "password": "1234",
+    "minutes": 0,
+    "role": "client",
+    "notes": "latex allergy",
+    "lastAppointment": "Never",
+    "lastAppointmentMinutes": 0
+  }
+]

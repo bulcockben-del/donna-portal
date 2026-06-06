@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donna Williamson Skinn Studio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+    <h2>Donna Williamson Skinn Studio</h2>
+
+    <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#treatments">Treatments</a></li>
+        <li><a href="#">Results</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a class="login-button" href="/login.html">Login</a></li>
+    </ul>
+</nav>
+
+<section class="hero" id="home">
+
+    <div class="hero-content">
+
+        <h1>Beauty, Skin & Tanning Specialists</h1>
+
+        <p>
+        Professional beauty treatments, advanced skincare,
+        brows, lashes and aesthetics.
+        </p>
+
+        <button onclick="bookNow()">
+            Book A Consultation
+        </button>
+
+    </div>
+
+</section>
+
+<section class="about">
+
+    <h2>About The Studio</h2>
+
+    <p>
+        Helping clients look and feel their best through
+        professional beauty, tanning and advanced skin treatments.
+    </p>
+
+</section>
+
+<section class="treatments" id="treatments">
+
+    <h2>Treatments</h2>
+
+    <div class="cards">
+
+    <div class="card">
+        <h3>Brows & Lashes</h3>
+        <p>Temporary text</p>
+    </div>
+
+    <div class="card">
+        <h3>Advanced Skin Care</h3>
+        <p>Temporary text</p>
+    </div>
+
+    <div class="card">
+        <h3>Beauty Treatments</h3>
+        <p>Temporary text</p>
+    </div>
+
+    </div>
+
+</section>
+
+<section class="membership">
+
+    <h2>Membership Portal</h2>
+
+    <p>
+        Members can view appointments,
+        treatment history and remaining minutes
+        through a secure online portal.
+    </p>
+
+</section>
+
+<section class="reviews" id="reviews">
+
+    <h2>Client Reviews</h2>
+
+    <div class="cards">
+
+        <div class="card">
+            <p>★★★★★</p>
+            <p>Amazing experience and fantastic results.</p>
+        </div>
+
+        <div class="card">
+            <p>★★★★★</p>
+            <p>Professional service from start to finish.</p>
+        </div>
+
+    </div>
+
+</section>
+
+<footer>
+
+    <h3>Donna Williamson Skin Studio</h3>
+
+    <p>
+        Beauty, Tanning & Advanced Skin Treatments
+    </p>
+
+</footer>
+
+<script>
+
+function bookNow(){
+
+    const user = JSON.parse(
+        localStorage.getItem("user")
+    );
+
+    if(!user){
+
+        window.location.href =
+        "/login.html";
+
+        return;
+
+    }
+
+    if(user.role === "admin"){
+
+        window.location.href =
+        "/admin.html";
+
+    }
+    else{
+
+        window.location.href =
+        "/dashboard.html";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

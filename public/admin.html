@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h1>Donna Admin Panel</h1>
+
+<p>
+Manage customer minutes and memberships.
+</p>
+
+</div>
+
+<div class="card">
+
+<h2>Clients</h2>
+
+<input
+id="search"
+type="text"
+placeholder="Search client..."
+onkeyup="renderUsers()">
+
+<div id="clients"></div>>
+
+</div>
+
+</div>
+
+<script>
+
+let allUsers = [];
+
+fetch("/users")
+.then(res=>res.json())
+.then(users=>{
+
+    allUsers = users;
+
+    renderUsers();
+
+});
+
+function renderUsers(){
+
+    const search =
+    document.getElementById("search")
+    .value
+    .toLowerCase();
+
+    let html = "";
+
+    allUsers.forEach(user=>{
+
+        if(
+            user.role === "client" &&
+            user.name
+            .toLowerCase()
+            .includes(search)
+        ){
+
+            html += `
+            <div class="client">
+
+                <div>
+
+                    <strong>${user.name}</strong>
+
+                    <p>
+                    ${user.minutes} Minutes
+                    </p>
+
+                </div>
+
+                <div class="controls">
+
+                    <input
+                    id="minutes-${user.id}"
+                    type="number"
+                    placeholder="Minutes">
+
+                    <button onclick="
+                    addMinutes(${user.id})
+                    ">
+                    Add
+                    </button>
+
+                    <button
+                    class="remove-btn"
+                    onclick="
+                    removeMinutes(${user.id})
+                    ">
+                    Remove
+                    </button>
+
+                    <button onclick="viewProfile(${user.id})">
+                    Profile
+                    </button>
+
+                </div>
+
+            </div>
+            `;
+
+        }
+
+    });
+
+    document.getElementById("clients")
+    .innerHTML = html;
+
+}
+
+function addMinutes(id){
+
+    const minutes = parseInt(
+        document.getElementById(
+            `minutes-${id}`
+        ).value
+    );
+
+    if(!minutes) return;
+
+    fetch("/add-minutes",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            id:id,
+            minutes:minutes
+
+        })
+
+    })
+
+    .then(()=>location.reload());
+
+}
+
+function removeMinutes(id){
+
+    const minutes = parseInt(
+        document.getElementById(
+            `minutes-${id}`
+        ).value
+    );
+
+    if(!minutes) return;
+
+    fetch("/add-minutes",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            id:id,
+            minutes:-minutes
+
+        })
+
+    })
+
+    .then(()=>location.reload());
+
+}
+
+function viewProfile(id){
+
+    const user = allUsers.find(
+        u => u.id === id
+    );
+
+    document.getElementById(
+        "profileName"
+    ).innerText =
+    user.name;
+
+    document.getElementById(
+        "profileEmail"
+    ).innerText =
+    user.email;
+
+    document.getElementById(
+        "profileMinutes"
+    ).innerText =
+    user.minutes;
+
+    document.getElementById(
+        "profileLastSession"
+    ).innerText =
+    user.lastAppointment || "Never";
+
+    document.getElementById(
+        "profileLastMinutes"
+    ).innerText =
+    user.lastAppointmentMinutes || 0;
+
+    document.getElementById(
+        "profileNotes"
+    ).innerText =
+    user.notes || "None";
+
+    document.getElementById(
+        "profileModal"
+    ).style.display =
+    "flex";
+
+}
+
+function closeProfile(){
+
+    document.getElementById(
+        "profileModal"
+    ).style.display =
+    "none";
+
+}
+
+</script>
+
+<div id="profileModal" class="modal">
+
+    <div class="modal-content">
+
+        <span
+        class="close"
+        onclick="closeProfile()">
+            &times;
+        </span>
+
+        <h2 id="profileName"></h2>
+
+        <p>
+            <strong>Email:</strong>
+            <span id="profileEmail"></span>
+        </p>
+
+        <p>
+            <strong>Minutes:</strong>
+            <span id="profileMinutes"></span>
+        </p>
+
+        <p>
+            <strong>Last Session:</strong>
+            <span id="profileLastSession"></span>
+        </p>
+
+        <p>
+            <strong>Minutes Used:</strong>
+            <span id="profileLastMinutes"></span>
+        </p>
+
+        <p>
+            <strong>Client Notes:</strong>
+        </p>
+
+        <p id="profileNotes"></p>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

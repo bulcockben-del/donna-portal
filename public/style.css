@@ -1,0 +1,149 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+:root{
+    --primary:#d8b4a0;
+    --secondary:#f7ebe5;
+    --accent:#8f6b5a;
+    --dark:#2d2d2d;
+}
+
+body{
+    color:var(--dark);
+}
+
+.login-button {
+    color: white;
+    padding: 15px 35px;
+    background: rgb(25, 66, 155);
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+}
+
+.about {
+    background-color: var(--secondary);
+}
+
+nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 10%;
+    background:white;
+}
+
+nav ul{
+    display:flex;
+    gap:25px;
+    list-style:none;
+}
+
+nav a{
+    text-decoration:none;
+    color:var(--dark);
+}
+
+.hero{
+    min-height:80vh;
+    background:
+    linear-gradient(rgba(0,0,0,.4),rgba(0,0,0,.4)),
+    url("https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=1600");
+    background-size:cover;
+    background-position:center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    color:white;
+}
+
+.hero-content{
+    max-width:700px;
+}
+
+.hero h1{
+    font-size:4rem;
+    margin-bottom:20px;
+}
+
+.hero p{
+    font-size:1.2rem;
+    margin-bottom:30px;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    transition: .3s;
+}
+
+button{
+    padding:15px 35px;
+    border:none;
+    background:var(--primary);
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+section{
+    padding:80px 10%;
+}
+
+h2{
+    margin-bottom:20px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:
+        translateY(-8px)
+        scale(1.02);
+}
+
+.membership{
+    background:var(--secondary);
+    text-align:center;
+}
+
+footer{
+    background:var(--dark);
+    color:white;
+    text-align:center;
+    padding:40px;
+}
+
+@media(max-width:768px){
+
+    nav{
+        flex-direction:column;
+        gap:20px;
+    }
+
+    nav ul{
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+    .hero h1{
+        font-size:2.5rem;
+    }
+
+}
