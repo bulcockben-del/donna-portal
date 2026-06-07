@@ -137,3 +137,12 @@ label{
     }
 
 }
+
+select{
+    width:100%;
+    padding:15px;
+    margin-bottom:15px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:1rem;
+}

@@ -36,13 +36,6 @@
     type="password"
     placeholder="Password">
 
-    <label>
-    Client Notes / Allergies (Optional)
-    </label>
-
-    <textarea id="notes"
-    placeholder="Any allergies, skin sensitivities or preferences"></textarea>
-
     <label class="terms">
 
     <input
@@ -83,15 +76,9 @@ function register(){
 
     }
 
-    fetch("/register",{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
+    localStorage.setItem(
+        "pendingUser",
+        JSON.stringify({
 
             name:
             document.getElementById("name").value,
@@ -100,25 +87,13 @@ function register(){
             document.getElementById("email").value,
 
             password:
-            document.getElementById("password").value,
-
-            notes:
-            document.getElementById("notes").value
+            document.getElementById("password").value
 
         })
+    );
 
-    })
-
-    .then(res=>res.json())
-
-    .then(data=>{
-
-        alert("Account Created!");
-
-        window.location.href =
-        "/login.html";
-
-    });
+    window.location.href =
+    "/client-info.html";
 
 }
 

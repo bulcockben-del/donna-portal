@@ -44,6 +44,8 @@ onkeyup="renderUsers()">
 
 let allUsers = [];
 
+let selectedUser = null;
+
 fetch("/users")
 .then(res=>res.json())
 .then(users=>{
@@ -192,6 +194,8 @@ function viewProfile(id){
         u => u.id === id
     );
 
+    selectedUser = user;
+
     document.getElementById(
         "profileName"
     ).innerText =
@@ -206,6 +210,21 @@ function viewProfile(id){
         "profileMinutes"
     ).innerText =
     user.minutes;
+
+    document.getElementById(
+        "profilePhone"
+    ).innerText =
+    user.phone || "Not provided";
+
+    document.getElementById(
+        "profileDob"
+    ).innerText =
+    user.dob || "Not provided";
+
+    document.getElementById(
+        "profileSkinType"
+    ).innerText =
+    user.skinType || "Not provided";
 
     document.getElementById(
         "profileLastSession"
@@ -235,6 +254,66 @@ function closeProfile(){
         "profileModal"
     ).style.display =
     "none";
+
+}
+
+function viewHistory(){
+
+    let html = "";
+
+    if(
+        !selectedUser ||
+        !selectedUser.history ||
+        selectedUser.history.length === 0
+    ){
+
+        html =
+        "<p>No session history found.</p>";
+
+    }
+    else{
+
+        selectedUser.history
+        .slice()
+        .reverse()
+        .forEach(session=>{
+
+            html += `
+
+            <div class="history-item">
+
+                <strong>
+                ${session.date}
+                </strong>
+
+                <p>
+                ${session.minutes}
+                minutes
+                </p>
+
+            </div>
+
+            `;
+
+        });
+
+    }
+
+    document.getElementById(
+        "historyList"
+    ).innerHTML = html;
+
+    document.getElementById(
+        "historyModal"
+    ).style.display = "flex";
+
+}
+
+function closeHistory(){
+
+    document.getElementById(
+        "historyModal"
+    ).style.display = "none";
 
 }
 
@@ -268,6 +347,21 @@ function closeProfile(){
         </p>
 
         <p>
+            <strong>Phone:</strong>
+            <span id="profilePhone"></span>
+        </p>
+
+        <p>
+            <strong>Date Of Birth:</strong>
+            <span id="profileDob"></span>
+        </p>
+
+        <p>
+            <strong>Skin Type:</strong>
+            <span id="profileSkinType"></span>
+        </p>
+
+        <p>
             <strong>Minutes Used:</strong>
             <span id="profileLastMinutes"></span>
         </p>
@@ -277,6 +371,31 @@ function closeProfile(){
         </p>
 
         <p id="profileNotes"></p>
+
+        <button
+            onclick="viewHistory()">
+
+            View Full History
+
+        </button>
+
+    </div>
+
+</div>
+
+<div id="historyModal" class="modal">
+
+    <div class="modal-content">
+
+        <span
+        class="close"
+        onclick="closeHistory()">
+            &times;
+        </span>
+
+        <h2>Session History</h2>
+
+        <div id="historyList"></div>
 
     </div>
 

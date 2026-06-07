@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Client Information</title>
+
+<link rel="stylesheet" href="register.css">
+
+</head>
+
+<body>
+
+<div class="register-card">
+
+<h1>Client Information</h1>
+
+<input
+id="phone"
+placeholder="Phone Number">
+
+<input
+id="dob"
+type="date">
+
+<label>Skin Type</label>
+
+<select id="skinType">
+
+<option>Sensitive</option>
+<option>Fair</option>
+<option>Medium</option>
+<option>Dark</option>
+
+</select>
+
+<label>
+Notes / Allergies
+</label>
+
+<textarea
+id="notes"
+placeholder="Any allergies, skin sensitivities or preferences">
+</textarea>
+
+<label class="terms">
+
+<input
+type="checkbox"
+id="over18">
+
+I confirm I am over 18 years old
+
+</label>
+
+<label class="terms">
+
+<input
+type="checkbox"
+id="safety">
+
+I have read and understand the sunbed safety information
+
+</label>
+
+<button onclick="completeRegistration()">
+
+Complete Registration
+
+</button>
+
+</div>
+
+<script>
+
+function completeRegistration(){
+
+    const user = JSON.parse(
+        localStorage.getItem(
+            "pendingUser"
+        )
+    );
+
+    if(
+        !document.getElementById(
+            "over18"
+        ).checked
+    ){
+
+        alert(
+            "Please confirm you are over 18."
+        );
+
+        return;
+
+    }
+
+    if(
+        !document.getElementById(
+            "safety"
+        ).checked
+    ){
+
+        alert(
+            "Please confirm the safety information."
+        );
+
+        return;
+
+    }
+
+    fetch("/register",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            name:user.name,
+            email:user.email,
+            password:user.password,
+
+            phone:
+            document.getElementById(
+                "phone"
+            ).value,
+
+            dob:
+            document.getElementById(
+                "dob"
+            ).value,
+
+            skinType:
+            document.getElementById(
+                "skinType"
+            ).value,
+
+            notes:
+            document.getElementById(
+                "notes"
+            ).value,
+
+            over18:true,
+
+            safetyAccepted:true
+
+        })
+
+    })
+
+    .then(res=>res.json())
+
+    .then(()=>{
+
+        localStorage.removeItem(
+            "pendingUser"
+        );
+
+        alert(
+            "Account Created!"
+        );
+
+        window.location.href =
+        "/login.html";
+
+    });
+
+}
+
+</script>
+
+</body>
+
+</html>

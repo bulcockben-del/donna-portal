@@ -1,57 +1,49 @@
 [
   {
-    "id": 1,
-    "name": "test",
-    "email": "123@test.com",
-    "password": "1234",
-    "minutes": 0,
-    "role": "client",
-    "notes": "Test",
-    "lastAppointment": "Never",
-    "lastAppointmentMinutes": 0
-  },
-  {
     "id": 2,
     "name": "admin",
-    "email": "123@admin.com",
-    "password": "admin123",
+    "email": "Admin@test.com",
+    "password": "1234",
     "minutes": 0,
     "role": "admin",
     "notes": "Test",
     "lastAppointment": "Never",
-    "lastAppointmentMinutes": 0
+    "lastAppointmentMinutes": 0,
+    "history": [],
+    "phone": "11111 11111",
+    "dob": "YYYY-MM-DD",
+    "skinType": "Medium",
+    "over18": true,
+    "safetyAccepted": true
   },
   {
-    "id": 1780701408462,
-    "name": "test2",
-    "email": "test2@test.com",
+    "id": 1780827425152,
+    "name": "clientTest",
+    "email": "Client@test.com",
     "password": "1234",
-    "minutes": 999982,
+    "minutes": 9999756,
     "role": "client",
+    "lastAppointment": "07/06/2026",
+    "lastAppointmentMinutes": 15,
+    "history": [
+      {
+        "date": "07/06/2026, 11:51:09",
+        "minutes": 12
+      },
+      {
+        "date": "07/06/2026, 11:51:13",
+        "minutes": 6
+      },
+      {
+        "date": "07/06/2026, 11:51:16",
+        "minutes": 15
+      }
+    ],
+    "phone": "11111 11111",
+    "dob": "YYYY-MM-DD",
+    "skinType": "Medium",
     "notes": "Test",
-    "lastAppointment": "06/06/2026",
-    "lastAppointmentMinutes": 15
-  },
-  {
-    "id": 1780746624169,
-    "name": "test3",
-    "email": "test3@test.com",
-    "password": "1234",
-    "minutes": 0,
-    "role": "client",
-    "notes": "Test",
-    "lastAppointment": "Never",
-    "lastAppointmentMinutes": 0
-  },
-  {
-    "id": 1780747853047,
-    "name": "allergy test",
-    "email": "test4@test.com",
-    "password": "1234",
-    "minutes": 0,
-    "role": "client",
-    "notes": "latex allergy",
-    "lastAppointment": "Never",
-    "lastAppointmentMinutes": 0
+    "over18": true,
+    "safetyAccepted": true
   }
 ]

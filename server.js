@@ -65,6 +65,24 @@ app.post("/use-session", (req, res) => {
 
         const today = new Date();
 
+        if(!user.history){
+
+        user.history = [];
+
+        }
+
+        user.history.push({
+
+            date:
+            today.toLocaleString(
+                "en-GB"
+            ),
+
+            minutes:
+            req.body.minutes
+
+        });
+
         user.lastAppointment =
         today.toLocaleDateString("en-GB");
 
@@ -131,11 +149,23 @@ app.post("/register",(req,res)=>{
 
         role:"client",
 
-        notes:req.body.notes,
-
         lastAppointment:"Never",
 
-        lastAppointmentMinutes:0
+        lastAppointmentMinutes:0,
+
+        history:[],
+
+        phone:req.body.phone,
+
+        dob:req.body.dob,
+
+        skinType:req.body.skinType,
+
+        notes:req.body.notes,
+
+        over18:req.body.over18,
+
+        safetyAccepted:req.body.safetyAccepted,
 
     };
 
