@@ -170,3 +170,13 @@ button{
     font-size:14px;
 
 }
+
+#historyList{
+
+    max-height:400px;
+
+    overflow-y:auto;
+
+    margin-top:15px;
+
+}
