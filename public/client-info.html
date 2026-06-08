@@ -23,13 +23,15 @@ content="width=device-width, initial-scale=1.0">
 <input
 id="phone"
 type="tel"
-placeholder="Phone Number">
+placeholder="Phone Number"
+required>
 
 <label>Date Of Birth</label>
 <input
 id="dob"
 type="date"
-class="mobile-date">
+class="mobile-date"
+required>
 
 <label>Skin Type</label>
 
@@ -84,6 +86,51 @@ Complete Registration
 <script>
 
 function completeRegistration(){
+
+    const phone =
+    document.getElementById(
+        "phone"
+    ).value.trim();
+
+    const dob =
+    document.getElementById(
+        "dob"
+    ).value;
+
+    const skinType =
+    document.getElementById(
+        "skinType"
+    ).value;
+
+    if(!phone){
+
+    alert(
+        "Please enter a phone number."
+    );
+
+    return;
+
+    }
+
+    if(!dob){
+
+        alert(
+            "Please enter your date of birth."
+        );
+
+        return;
+
+    }
+
+    if(!skinType){
+
+        alert(
+            "Please select a skin type."
+        );
+
+        return;
+
+    }
 
     const user = JSON.parse(
         localStorage.getItem(
