@@ -136,6 +136,12 @@ label{
         box-sizing:border-box;
     }
 
+    .mobile-date{
+    appearance:none;
+    -webkit-appearance:none;
+    min-height:50px;
+}
+
 }
 
 select{
