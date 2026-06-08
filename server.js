@@ -179,6 +179,36 @@ app.post("/register",(req,res)=>{
 
 });
 
+app.post("/create-admin",(req,res)=>{
+
+    const users = getUsers();
+
+    const newAdmin = {
+
+        id: Date.now(),
+
+        name:req.body.name,
+
+        email:req.body.email,
+
+        password:req.body.password,
+
+        minutes:0,
+
+        role:"admin"
+
+    };
+
+    users.push(newAdmin);
+
+    saveUsers(users);
+
+    res.json({
+        success:true
+    });
+
+});
+
 app.listen(process.env.PORT || 3000, () => {
     console.log("Server running");
 });

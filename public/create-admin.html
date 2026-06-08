@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Create Admin</title>
+
+<link rel="stylesheet" href="register.css">
+
+</head>
+
+<body>
+
+<div class="register-card">
+
+<h1>Create Staff Admin</h1>
+
+<input
+id="name"
+placeholder="Full Name">
+
+<input
+id="email"
+type="email"
+placeholder="Email Address">
+
+<input
+id="password"
+type="password"
+placeholder="Password">
+
+<button onclick="createAdmin()">
+
+Create Admin
+
+</button>
+
+</div>
+
+<script>
+const user = JSON.parse(
+    localStorage.getItem("user")
+);
+
+if(
+    !user ||
+    user.role !== "admin"
+){
+
+    window.location.href =
+    "/login.html";
+
+}
+
+function createAdmin(){
+
+    const name =
+    document.getElementById(
+        "name"
+    ).value.trim();
+
+    const email =
+    document.getElementById(
+        "email"
+    ).value.trim();
+
+    const password =
+    document.getElementById(
+        "password"
+    ).value.trim();
+
+    if(!name){
+
+        alert(
+            "Please enter a name."
+        );
+
+        return;
+
+    }
+
+    if(!email){
+
+        alert(
+            "Please enter an email."
+        );
+
+        return;
+
+    }
+
+    if(!password){
+
+        alert(
+            "Please enter a password."
+        );
+
+        return;
+
+    }
+
+    fetch("/create-admin",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            name:name,
+            email:email,
+            password:password
+
+        })
+
+    })
+
+    .then(res=>res.json())
+
+    .then(()=>{
+
+        alert(
+            "Admin account created."
+        );
+
+        window.location.href =
+        "/admin.html";
+
+    });
+
+}
+
+</script>
+
+</body>
+
+</html>
