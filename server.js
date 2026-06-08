@@ -109,7 +109,9 @@ app.post("/login", (req, res) => {
 
     const user = users.find(
         u =>
-        u.email === req.body.email &&
+        u.email.toLowerCase() === req.body.email.toLowerCase() &&
+
+
         u.password === req.body.password
     );
 
@@ -141,7 +143,7 @@ app.post("/register",(req,res)=>{
 
         name:req.body.name,
 
-        email:req.body.email,
+        email:req.body.email.toLowerCase(),
 
         password:req.body.password,
 
@@ -189,7 +191,7 @@ app.post("/create-admin",(req,res)=>{
 
         name:req.body.name,
 
-        email:req.body.email,
+        email:req.body.email.toLowerCase(),
 
         password:req.body.password,
 
