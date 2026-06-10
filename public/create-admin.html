@@ -124,7 +124,17 @@ function createAdmin(){
 
     .then(res=>res.json())
 
-    .then(()=>{
+    .then(data=>{
+
+        if(!data.success){
+
+            alert(
+                data.message
+            );
+
+            return;
+
+        }
 
         alert(
             "Admin account created."

@@ -210,7 +210,17 @@ function completeRegistration(){
 
     .then(res=>res.json())
 
-    .then(()=>{
+    .then(data=>{
+
+        if(!data.success){
+
+            alert(
+                data.message
+            );
+
+            return;
+
+        }
 
         localStorage.removeItem(
             "pendingUser"

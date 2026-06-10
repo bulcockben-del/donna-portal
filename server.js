@@ -137,6 +137,25 @@ app.post("/register",(req,res)=>{
 
     const users = getUsers();
 
+    const existingUser = users.find(
+        u =>
+        u.email.toLowerCase() ===
+        req.body.email.toLowerCase()
+    );
+
+    if(existingUser){
+
+        return res.status(400).json({
+
+            success:false,
+
+            message:
+            "An account with this email already exists."
+
+        });
+
+}
+
     const newUser = {
 
         id: Date.now(),
@@ -184,6 +203,25 @@ app.post("/register",(req,res)=>{
 app.post("/create-admin",(req,res)=>{
 
     const users = getUsers();
+
+    const existingUser = users.find(
+        u =>
+        u.email.toLowerCase() ===
+        req.body.email.toLowerCase()
+    );
+
+    if(existingUser){
+
+        return res.status(400).json({
+
+            success:false,
+
+            message:
+            "An account with this email already exists."
+
+        });
+
+    }
 
     const newAdmin = {
 
