@@ -48,29 +48,17 @@ class="minutes">
 
 <div class="card">
 
+<h2>Using Your Minutes</h2>
 
-<h2>Choose Session Length</h2>
+<p>
 
-<div class="session-buttons">
+To use your sunbed minutes,
+please speak to a member of staff.
 
-    <button onclick="selectMinutes(3)">3</button>
-    <button onclick="selectMinutes(6)">6</button>
-    <button onclick="selectMinutes(9)">9</button>
-    <button onclick="selectMinutes(12)">12</button>
-    <button onclick="selectMinutes(15)">15</button>
+Minutes are deducted by the salon
+during your visit.
 
-</div>
-
-<input
-id="customMinutes"
-type="number"
-placeholder="Custom Minutes">
-
-<button
-class="confirm-btn"
-onclick="confirmSession()">
-Start Session
-</button>
+</p>
 
 </div>
 
@@ -140,107 +128,6 @@ document.getElementById(
     "lastMinutes"
 ).innerText =
 user.lastAppointmentMinutes || 0;
-
-let selectedMinutes = 0;
-
-function selectMinutes(minutes){
-
-    selectedMinutes = minutes;
-
-    document.getElementById(
-        "customMinutes"
-    ).value = minutes;
-
-}
-
-function confirmSession(){
-
-    const customValue = parseInt(
-        document.getElementById(
-            "customMinutes"
-        ).value
-    );
-
-    const minutesToUse =
-    customValue || selectedMinutes;
-
-    if(!minutesToUse){
-
-        alert(
-            "Please select a session length."
-        );
-
-        return;
-
-    }
-
-    if(minutesToUse > user.minutes){
-
-        alert(
-            "Not enough minutes remaining."
-        );
-
-        return;
-
-    }
-
-    fetch("/use-session",{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            id:user.id,
-            minutes:minutesToUse
-
-        })
-
-    })
-
-    .then(res=>res.json())
-
-    .then(updatedUser=>{
-
-    user.minutes =
-        updatedUser.minutes;
-
-        user.lastAppointment =
-        updatedUser.lastAppointment;
-
-        user.lastAppointmentMinutes =
-        updatedUser.lastAppointmentMinutes;
-
-        localStorage.setItem(
-            "user",
-            JSON.stringify(user)
-        );
-
-        document.getElementById(
-            "minutes"
-        ).innerText =
-        updatedUser.minutes;
-
-        alert(
-            "Session Started!"
-        );
-
-        document.getElementById(
-            "lastDate"
-        ).innerText =
-        updatedUser.lastAppointment;
-
-        document.getElementById(
-            "lastMinutes"
-        ).innerText =
-        updatedUser.lastAppointmentMinutes;
-
-            });
-
-}
 
 function logout(){
 

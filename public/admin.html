@@ -323,6 +323,79 @@ function closeHistory(){
 
 }
 
+function recordSession(minutes){
+
+    if(!selectedUser){
+
+        return;
+
+    }
+
+    fetch("/use-session",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            id:selectedUser.id,
+            minutes:minutes
+
+        })
+
+    })
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+        if(data.success === false){
+
+            alert(
+                data.message
+            );
+
+            return;
+
+        }
+
+        alert(
+            "Session recorded."
+        );
+
+        location.reload();
+
+    });
+
+}
+
+function recordCustomSession(){
+
+    const minutes = parseInt(
+
+        document.getElementById(
+            "customSessionMinutes"
+        ).value
+
+    );
+
+    if(!minutes){
+
+        alert(
+            "Enter minutes."
+        );
+
+        return;
+
+    }
+
+    recordSession(minutes);
+
+}
+
 </script>
 
 <div id="profileModal" class="modal">
@@ -371,6 +444,44 @@ function closeHistory(){
             <strong>Minutes Used:</strong>
             <span id="profileLastMinutes"></span>
         </p>
+
+        <h3>Record Session</h3>
+
+    <div class="session-buttons">
+
+        <button onclick="recordSession(3)">
+            3
+        </button>
+
+        <button onclick="recordSession(6)">
+            6
+        </button>
+
+        <button onclick="recordSession(9)">
+            9
+        </button>
+
+        <button onclick="recordSession(12)">
+            12
+        </button>
+
+        <button onclick="recordSession(15)">
+            15
+        </button>
+
+    </div>
+
+    <input
+    id="customSessionMinutes"
+    type="number"
+    placeholder="Custom Minutes">
+
+    <button
+    onclick="recordCustomSession()">
+
+    Record Custom Session
+
+    </button>
 
         <p>
             <strong>Client Notes:</strong>

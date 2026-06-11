@@ -61,6 +61,19 @@ app.post("/use-session", (req, res) => {
 
     if(user){
 
+        if(req.body.minutes > user.minutes){
+
+        return res.status(400).json({
+
+            success:false,
+
+            message:
+            "Not enough minutes remaining."
+
+        });
+
+    }
+
         user.minutes -= req.body.minutes;
 
         const today = new Date();
