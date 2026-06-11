@@ -32,6 +32,8 @@ id="minutes"
 class="minutes">
 </div>
 
+<div id="expiryWarnings"></div>
+
 <p class="last-session">
 
     Last Session:
@@ -43,6 +45,14 @@ class="minutes">
     <span id="lastMinutes"></span>
 
 </p>
+
+<button
+class="confirm-btn"
+onclick="viewHistory()">
+
+View Full History
+
+</button>
 
 </div>
 
@@ -113,6 +123,45 @@ document.getElementById("minutes")
 .innerText =
 user.minutes;
 
+if(
+    user.expiringPackages &&
+    user.expiringPackages.length > 0
+){
+
+    let html = "";
+
+    user.expiringPackages.forEach(package=>{
+
+        const expiryDate =
+        new Date(package.dateAdded);
+
+        expiryDate.setMonth(
+            expiryDate.getMonth() + 3
+        );
+
+        html += `
+
+        <p class="expiry-warning">
+
+        ⚠ ${package.remaining}
+        minutes expire on
+
+        ${expiryDate.toLocaleDateString(
+            "en-GB"
+        )}
+
+        </p>
+
+        `;
+
+    });
+
+    document.getElementById(
+        "expiryWarnings"
+    ).innerHTML = html;
+
+}
+
 document.getElementById("welcome")
 .innerText =
 "Welcome Back " +
@@ -147,7 +196,83 @@ function openBooksy(){
 
 }
 
+function viewHistory(){
+
+    let html = "";
+
+    if(
+        !user.history ||
+        user.history.length === 0
+    ){
+
+        html =
+        "<p>No session history found.</p>";
+
+    }
+    else{
+
+        user.history
+        .slice()
+        .reverse()
+        .forEach(session=>{
+
+            html += `
+
+            <div class="history-item">
+
+                <div class="history-date">
+                    ${session.date}
+                </div>
+
+                <div class="history-minutes">
+                    ${session.minutes} Minutes
+                </div>
+
+            </div>
+
+            `;
+
+        });
+
+    }
+
+    document.getElementById(
+        "historyList"
+    ).innerHTML = html;
+
+    document.getElementById(
+        "historyModal"
+    ).style.display = "flex";
+
+}
+
+function closeHistory(){
+
+    document.getElementById(
+        "historyModal"
+    ).style.display = "none";
+
+}
+
 </script>
+
+<div id="historyModal" class="modal">
+
+    <div class="modal-content">
+
+        <span
+        class="close"
+        onclick="closeHistory()">
+            &times;
+        </span>
+
+        <h2>Your Session History</h2>
+
+        <div id="historyList"></div>
+
+    </div>
+
+</div>
 
 </body>
 </html>

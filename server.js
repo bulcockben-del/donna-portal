@@ -19,11 +19,92 @@ function saveUsers(users) {
     );
 }
 
+function removeExpiredMinutes(user){
+
+    if(!user.minutePackages){
+
+        return;
+
+    }
+
+    const now = new Date();
+
+    user.minutePackages =
+    user.minutePackages.filter(package=>{
+
+        const addedDate =
+        new Date(package.dateAdded);
+
+        const expiryDate =
+        new Date(addedDate);
+
+        expiryDate.setMonth(
+            expiryDate.getMonth() + 3
+        );
+
+        return expiryDate > now;
+
+    });
+
+    user.minutes = 0;
+
+    user.minutePackages.forEach(package=>{
+
+        user.minutes +=
+        package.remaining;
+
+    });
+
+}
+
+function getExpiringPackages(user){
+
+    if(!user.minutePackages){
+
+        return [];
+
+    }
+
+    const now = new Date();
+
+    return user.minutePackages.filter(package=>{
+
+        const addedDate =
+        new Date(package.dateAdded);
+
+        const expiryDate =
+        new Date(addedDate);
+
+        expiryDate.setMonth(
+            expiryDate.getMonth() + 3
+        );
+
+        const daysUntilExpiry =
+
+            (expiryDate - now) /
+
+            (1000 * 60 * 60 * 24);
+
+        return daysUntilExpiry <= 7 &&
+               daysUntilExpiry > 0;
+
+    });
+
+}
+
 app.get("/users", (req, res) => {
 
-    res.json(
-        getUsers()
-    );
+    const users = getUsers();
+
+    users.forEach(user=>{
+
+        removeExpiredMinutes(user);
+
+    });
+
+    saveUsers(users);
+
+    res.json(users);
 
 });
 
@@ -39,11 +120,31 @@ app.post("/add-minutes", (req, res) => {
 
         user.minutes += req.body.minutes;
 
+        if(req.body.minutes > 0){
+
+            if(!user.minutePackages){
+
+                user.minutePackages = [];
+
+            }
+
+            user.minutePackages.push({
+
+                minutes:req.body.minutes,
+
+                remaining:req.body.minutes,
+
+                dateAdded:new Date()
+
+            });
+
+        }
+
         saveUsers(users);
 
         res.json(user);
 
-    } else {
+    }else {
 
         res.status(404).send("User not found");
 
@@ -73,6 +174,42 @@ app.post("/use-session", (req, res) => {
         });
 
     }
+
+        let minutesToDeduct =
+        req.body.minutes;
+
+        if(user.minutePackages){
+
+            user.minutePackages.forEach(package=>{
+
+                if(minutesToDeduct <= 0){
+
+                    return;
+
+                }
+
+                const deduction = Math.min(
+
+                    package.remaining,
+
+                    minutesToDeduct
+
+                );
+
+                package.remaining -= deduction;
+
+                minutesToDeduct -= deduction;
+
+            });
+
+        }
+
+        user.minutePackages =
+        user.minutePackages.filter(
+
+            package => package.remaining > 0
+
+        );
 
         user.minutes -= req.body.minutes;
 
@@ -127,6 +264,17 @@ app.post("/login", (req, res) => {
 
         u.password === req.body.password
     );
+
+    if(user){
+
+        removeExpiredMinutes(user);
+
+        user.expiringPackages =
+        getExpiringPackages(user);
+
+        saveUsers(users);
+
+    }
 
     if(user){
 
@@ -188,6 +336,8 @@ app.post("/register",(req,res)=>{
         lastAppointmentMinutes:0,
 
         history:[],
+
+        minutePackages:[],
 
         phone:req.body.phone,
 

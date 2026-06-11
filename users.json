@@ -10,6 +10,7 @@
     "lastAppointment": "Never",
     "lastAppointmentMinutes": 0,
     "history": [],
+    "minutePackages": [],
     "phone": "11111 11111",
     "dob": "YYYY-MM-DD",
     "skinType": "Medium",
@@ -21,29 +22,26 @@
     "name": "clientTest",
     "email": "Client@test.com",
     "password": "1234",
-    "minutes": 9999756,
+    "minutes": 0,
     "role": "client",
-    "lastAppointment": "07/06/2026",
-    "lastAppointmentMinutes": 15,
+    "lastAppointment": "11/06/2026",
+    "lastAppointmentMinutes": 12,
     "history": [
-      {
-        "date": "07/06/2026, 11:51:09",
-        "minutes": 12
-      },
-      {
-        "date": "07/06/2026, 11:51:13",
-        "minutes": 6
-      },
-      {
-        "date": "07/06/2026, 11:51:16",
-        "minutes": 15
-      }
+    ],
+    "minutePackages": [
     ],
     "phone": "11111 11111",
     "dob": "YYYY-MM-DD",
     "skinType": "Medium",
     "notes": "Test",
     "over18": true,
-    "safetyAccepted": true
+    "safetyAccepted": true,
+    "expiringPackages": [
+      {
+        "minutes": 56,
+        "remaining": 56,
+        "dateAdded": "2026-03-18T18:14:54.480Z"
+      }
+    ]
   }
 ]
