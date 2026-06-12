@@ -15,20 +15,30 @@
     "dob": "YYYY-MM-DD",
     "skinType": "Medium",
     "over18": true,
-    "safetyAccepted": true
+    "safetyAccepted": true,
+    "expiringPackages": []
   },
   {
     "id": 1780827425152,
     "name": "clientTest",
     "email": "Client@test.com",
     "password": "1234",
-    "minutes": 0,
+    "minutes": 40,
     "role": "client",
     "lastAppointment": "11/06/2026",
-    "lastAppointmentMinutes": 12,
+    "lastAppointmentMinutes": 50,
     "history": [
+      {
+        "date": "11/06/2026, 19:24:18",
+        "minutes": 50
+      }
     ],
     "minutePackages": [
+      {
+        "minutes": 45,
+        "remaining": 40,
+        "dateAdded": "2026-06-11T18:24:12.482Z"
+      }
     ],
     "phone": "11111 11111",
     "dob": "YYYY-MM-DD",
@@ -36,12 +46,6 @@
     "notes": "Test",
     "over18": true,
     "safetyAccepted": true,
-    "expiringPackages": [
-      {
-        "minutes": 56,
-        "remaining": 56,
-        "dateAdded": "2026-03-18T18:14:54.480Z"
-      }
-    ]
+    "expiringPackages": []
   }
 ]

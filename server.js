@@ -1,23 +1,21 @@
+const { createClient } = require("@supabase/supabase-js");
+
 const express = require("express");
-const fs = require("fs");
+
+
+const supabaseUrl = "https://fcerfynwnpikxnwgtzvz.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjZXJmeW53bnBpa3hud2d0enZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMTAxMzAsImV4cCI6MjA5Njc4NjEzMH0.zuNYFk9YEjE7DKkgn_gl8AYCdJ9QaOuL30N7VE10INU";
+
+const supabase = createClient(
+    supabaseUrl,
+    supabaseKey
+);
+
 
 const app = express();
 
 app.use(express.json());
 app.use(express.static("public"));
-
-function getUsers() {
-    return JSON.parse(
-        fs.readFileSync("users.json")
-    );
-}
-
-function saveUsers(users) {
-    fs.writeFileSync(
-        "users.json",
-        JSON.stringify(users, null, 2)
-    );
-}
 
 function removeExpiredMinutes(user){
 
@@ -92,77 +90,159 @@ function getExpiringPackages(user){
 
 }
 
-app.get("/users", (req, res) => {
+app.get("/users", async (req, res) => {
 
-    const users = getUsers();
+    const { data: users, error } =
+    await supabase
+        .from("users")
+        .select("*");
 
-    users.forEach(user=>{
+    if(error){
+
+        console.log(error);
+
+        return res.status(500).send(
+            "Database error"
+        );
+
+    }
+
+    users.forEach(user => {
 
         removeExpiredMinutes(user);
 
     });
 
-    saveUsers(users);
-
     res.json(users);
 
 });
 
-app.post("/add-minutes", (req, res) => {
+app.post("/add-minutes", async (req, res) => {
 
-    const users = getUsers();
+    const { data: user, error } =
+    await supabase
+        .from("users")
+        .select("*")
+        .eq("id", req.body.id)
+        .single();
 
-    const user = users.find(
-        u => u.id === req.body.id
-    );
+    if(error || !user){
 
-    if(user){
-
-        user.minutes += req.body.minutes;
-
-        if(req.body.minutes > 0){
-
-            if(!user.minutePackages){
-
-                user.minutePackages = [];
-
-            }
-
-            user.minutePackages.push({
-
-                minutes:req.body.minutes,
-
-                remaining:req.body.minutes,
-
-                dateAdded:new Date()
-
-            });
-
-        }
-
-        saveUsers(users);
-
-        res.json(user);
-
-    }else {
-
-        res.status(404).send("User not found");
+        return res.status(404).send(
+            "User not found"
+        );
 
     }
 
+    if(!user.minutePackages){
+
+        user.minutePackages = [];
+
+    }
+
+    if(req.body.minutes > 0){
+
+        user.minutes += req.body.minutes;
+
+        user.minutePackages.push({
+
+            minutes:req.body.minutes,
+
+            remaining:req.body.minutes,
+
+            dateAdded:new Date()
+
+        });
+
+    } else {
+
+        let minutesToRemove =
+        Math.abs(req.body.minutes);
+
+        user.minutePackages.forEach(package=>{
+
+            if(minutesToRemove <= 0){
+
+                return;
+
+            }
+
+            const deduction = Math.min(
+
+                package.remaining,
+
+                minutesToRemove
+
+            );
+
+            package.remaining -= deduction;
+
+            minutesToRemove -= deduction;
+
+        });
+
+        user.minutePackages =
+        user.minutePackages.filter(
+
+            package => package.remaining > 0
+
+        );
+
+        user.minutes = 0;
+
+        user.minutePackages.forEach(package=>{
+
+            user.minutes +=
+            package.remaining;
+
+        });
+
+    }
+
+    const { error:updateError } =
+    await supabase
+        .from("users")
+        .update({
+
+            minutes:user.minutes,
+
+            minutePackages:user.minutePackages
+
+        })
+        .eq("id", req.body.id);
+
+    if(updateError){
+
+        console.log(updateError);
+
+        return res.status(500).send(
+            "Database error"
+        );
+
+    }
+
+    res.json(user);
+
 });
 
-app.post("/use-session", (req, res) => {
+app.post("/use-session", async (req, res) => {
 
-    const users = getUsers();
+    const { data: user, error } =
+    await supabase
+        .from("users")
+        .select("*")
+        .eq("id", req.body.id)
+        .single();
 
-    const user = users.find(
-        u => u.id === req.body.id
-    );
+    if(error || !user){
 
-    if(user){
+        return res.status(404).send(
+            "User not found"
+        );
 
-        if(req.body.minutes > user.minutes){
+    }
+
+    if(req.body.minutes > user.minutes){
 
         return res.status(400).json({
 
@@ -175,134 +255,153 @@ app.post("/use-session", (req, res) => {
 
     }
 
-        let minutesToDeduct =
-        req.body.minutes;
+    let minutesToDeduct =
+    req.body.minutes;
 
-        if(user.minutePackages){
+    if(user.minutePackages){
 
-            user.minutePackages.forEach(package=>{
+        user.minutePackages.forEach(package=>{
 
-                if(minutesToDeduct <= 0){
+            if(minutesToDeduct <= 0){
 
-                    return;
+                return;
 
-                }
+            }
 
-                const deduction = Math.min(
+            const deduction = Math.min(
 
-                    package.remaining,
+                package.remaining,
 
-                    minutesToDeduct
+                minutesToDeduct
 
-                );
+            );
 
-                package.remaining -= deduction;
+            package.remaining -= deduction;
 
-                minutesToDeduct -= deduction;
+            minutesToDeduct -= deduction;
 
-            });
+        });
 
-        }
+    }
 
-        user.minutePackages =
-        user.minutePackages.filter(
+    user.minutePackages =
+    user.minutePackages.filter(
 
-            package => package.remaining > 0
+        package => package.remaining > 0
 
-        );
+    );
 
-        user.minutes -= req.body.minutes;
+    user.minutes -= req.body.minutes;
 
-        const today = new Date();
+    const today = new Date();
 
-        if(!user.history){
+    if(!user.history){
 
         user.history = [];
 
-        }
+    }
 
-        user.history.push({
+    user.history.push({
 
-            date:
-            today.toLocaleString(
-                "en-GB"
-            ),
+        date:
+        today.toLocaleString(
+            "en-GB"
+        ),
 
-            minutes:
-            req.body.minutes
+        minutes:
+        req.body.minutes
+
+    });
+
+    user.lastAppointment =
+    today.toLocaleDateString("en-GB");
+
+    user.lastAppointmentMinutes =
+    req.body.minutes;
+
+    const { error:updateError } =
+    await supabase
+        .from("users")
+        .update({
+
+            minutes:user.minutes,
+
+            minutePackages:user.minutePackages,
+
+            history:user.history,
+
+            lastAppointment:user.lastAppointment,
+
+            lastAppointmentMinutes:
+            user.lastAppointmentMinutes
+
+        })
+        .eq("id", req.body.id);
+
+    if(updateError){
+
+        console.log(updateError);
+
+        return res.status(500).json({
+
+            success:false
 
         });
 
-        user.lastAppointment =
-        today.toLocaleDateString("en-GB");
-
-        user.lastAppointmentMinutes =
-        req.body.minutes;
-
-        saveUsers(users);
-
-        res.json(user);
-
-    } else {
-
-        res.status(404).send(
-            "User not found"
-        );
-
     }
+
+    res.json(user);
 
 });
 
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
 
-    const users = getUsers();
+    const { data: user, error } =
+    await supabase
+        .from("users")
+        .select("*")
+        .eq(
+            "email",
+            req.body.email.toLowerCase()
+        )
+        .eq(
+            "password",
+            req.body.password
+        )
+        .single();
 
-    const user = users.find(
-        u =>
-        u.email.toLowerCase() === req.body.email.toLowerCase() &&
+    if(error || !user){
 
-
-        u.password === req.body.password
-    );
-
-    if(user){
-
-        removeExpiredMinutes(user);
-
-        user.expiringPackages =
-        getExpiringPackages(user);
-
-        saveUsers(users);
-
-    }
-
-    if(user){
-
-        res.json({
-            success:true,
-            role:user.role,
-            user:user
-        });
-
-    } else {
-
-        res.status(401).json({
+        return res.status(401).json({
             success:false
         });
 
     }
 
+    removeExpiredMinutes(user);
+
+    user.expiringPackages =
+    getExpiringPackages(user);
+
+    res.json({
+        success:true,
+        role:user.role,
+        user:user
+    });
+
 });
 
-app.post("/register",(req,res)=>{
+app.post("/register", async (req, res) => {
 
-    const users = getUsers();
-
-    const existingUser = users.find(
-        u =>
-        u.email.toLowerCase() ===
-        req.body.email.toLowerCase()
-    );
+    const { data: existingUser } =
+    await supabase
+        .from("users")
+        .select("*")
+        .eq(
+            "email",
+            req.body.email.toLowerCase()
+        )
+        .single();
 
     if(existingUser){
 
@@ -315,7 +414,7 @@ app.post("/register",(req,res)=>{
 
         });
 
-}
+    }
 
     const newUser = {
 
@@ -349,29 +448,46 @@ app.post("/register",(req,res)=>{
 
         over18:req.body.over18,
 
-        safetyAccepted:req.body.safetyAccepted,
+        safetyAccepted:req.body.safetyAccepted
 
     };
 
-    users.push(newUser);
+    const { error } =
+    await supabase
+        .from("users")
+        .insert([newUser]);
 
-    saveUsers(users);
+    if(error){
+
+        console.log(error);
+
+        return res.status(500).json({
+
+            success:false
+
+        });
+
+    }
 
     res.json({
+
         success:true
+
     });
 
 });
 
-app.post("/create-admin",(req,res)=>{
+app.post("/create-admin", async (req, res) => {
 
-    const users = getUsers();
-
-    const existingUser = users.find(
-        u =>
-        u.email.toLowerCase() ===
-        req.body.email.toLowerCase()
-    );
+    const { data: existingUser } =
+    await supabase
+        .from("users")
+        .select("*")
+        .eq(
+            "email",
+            req.body.email.toLowerCase()
+        )
+        .single();
 
     if(existingUser){
 
@@ -398,16 +514,51 @@ app.post("/create-admin",(req,res)=>{
 
         minutes:0,
 
-        role:"admin"
+        role:"admin",
+
+        history:[],
+
+        minutePackages:[],
+
+        lastAppointment:"Never",
+
+        lastAppointmentMinutes:0,
+
+        phone:"",
+
+        dob:"",
+
+        skinType:"",
+
+        notes:"",
+
+        over18:true,
+
+        safetyAccepted:true
 
     };
 
-    users.push(newAdmin);
+    const { error } =
+    await supabase
+        .from("users")
+        .insert([newAdmin]);
 
-    saveUsers(users);
+    if(error){
+
+        console.log(error);
+
+        return res.status(500).json({
+
+            success:false
+
+        });
+
+    }
 
     res.json({
+
         success:true
+
     });
 
 });
