@@ -55,6 +55,43 @@ function removeExpiredMinutes(user){
 
 }
 
+async function saveExpiredChanges(user){
+
+    const originalMinutes =
+    user.minutes;
+
+    const originalPackages =
+    JSON.stringify(
+        user.minutePackages || []
+    );
+
+    removeExpiredMinutes(user);
+
+    const updatedPackages =
+    JSON.stringify(
+        user.minutePackages || []
+    );
+
+    if(
+        originalMinutes !== user.minutes ||
+        originalPackages !== updatedPackages
+    ){
+
+        await supabase
+            .from("users")
+            .update({
+
+                minutes:user.minutes,
+
+                minutePackages:user.minutePackages
+
+            })
+            .eq("id", user.id);
+
+    }
+
+}
+
 function getExpiringPackages(user){
 
     if(!user.minutePackages){
@@ -107,11 +144,11 @@ app.get("/users", async (req, res) => {
 
     }
 
-    users.forEach(user => {
+    for(const user of users){
 
-        removeExpiredMinutes(user);
+        await saveExpiredChanges(user);
 
-    });
+    }
 
     res.json(users);
 
@@ -134,6 +171,8 @@ app.post("/add-minutes", async (req, res) => {
 
     }
 
+    await saveExpiredChanges(user);
+    
     if(!user.minutePackages){
 
         user.minutePackages = [];
@@ -241,6 +280,8 @@ app.post("/use-session", async (req, res) => {
         );
 
     }
+
+    await saveExpiredChanges(user);
 
     if(req.body.minutes > user.minutes){
 
@@ -378,7 +419,7 @@ app.post("/login", async (req, res) => {
 
     }
 
-    removeExpiredMinutes(user);
+    await saveExpiredChanges(user);
 
     user.expiringPackages =
     getExpiringPackages(user);
