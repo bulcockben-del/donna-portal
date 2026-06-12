@@ -112,17 +112,22 @@ const user = JSON.parse(
     localStorage.getItem("user")
 );
 
-if(user.role === "admin"){
-    
-    window.location.href =
-    "/admin.html";
-}
+if(
+    !user ||
+    !user.id
+){
 
-if(!user){
+    localStorage.removeItem("user");
 
     window.location.href =
     "/login.html";
 
+}
+
+if(user.role === "admin"){
+    
+    window.location.href =
+    "/admin.html";
 }
 
 document.getElementById("minutes")
