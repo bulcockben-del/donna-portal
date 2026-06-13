@@ -1,7 +1,9 @@
+
 const { createClient } = require("@supabase/supabase-js");
 
 const express = require("express");
 
+const bcrypt = require("bcrypt");
 
 const supabaseUrl = "https://fcerfynwnpikxnwgtzvz.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjZXJmeW53bnBpa3hud2d0enZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMTAxMzAsImV4cCI6MjA5Njc4NjEzMH0.zuNYFk9YEjE7DKkgn_gl8AYCdJ9QaOuL30N7VE10INU";
@@ -405,13 +407,23 @@ app.post("/login", async (req, res) => {
             "email",
             req.body.email.toLowerCase()
         )
-        .eq(
-            "password",
-            req.body.password
-        )
         .single();
 
     if(error || !user){
+
+        return res.status(401).json({
+            success:false
+        });
+
+    }
+
+    const passwordMatch =
+    await bcrypt.compare(
+        req.body.password,
+        user.password
+    );
+
+    if(!passwordMatch){
 
         return res.status(401).json({
             success:false
@@ -465,7 +477,10 @@ app.post("/register", async (req, res) => {
 
         email:req.body.email.toLowerCase(),
 
-        password:req.body.password,
+        password:await bcrypt.hash(
+            req.body.password,
+            10
+        ),
 
         minutes:0,
 
@@ -551,7 +566,10 @@ app.post("/create-admin", async (req, res) => {
 
         email:req.body.email.toLowerCase(),
 
-        password:req.body.password,
+        password:await bcrypt.hash(
+            req.body.password,
+            10
+        ),
 
         minutes:0,
 
@@ -591,6 +609,89 @@ app.post("/create-admin", async (req, res) => {
         return res.status(500).json({
 
             success:false
+
+        });
+
+    }
+
+    res.json({
+
+        success:true
+
+    });
+
+});
+
+app.post("/change-password", async (req, res) => {
+
+    const { data:user, error } =
+    await supabase
+        .from("users")
+        .select("*")
+        .eq("id", req.body.id)
+        .single();
+
+    if(error || !user){
+
+        return res.json({
+
+            success:false,
+
+            message:"User not found."
+
+        });
+
+    }
+
+    const passwordMatch =
+    await bcrypt.compare(
+
+        req.body.currentPassword,
+
+        user.password
+
+    );
+
+    if(!passwordMatch){
+
+        return res.json({
+
+            success:false,
+
+            message:
+            "Current password is incorrect."
+
+        });
+
+    }
+
+    const hashedPassword =
+    await bcrypt.hash(
+
+        req.body.newPassword,
+
+        10
+
+    );
+
+    const { error:updateError } =
+    await supabase
+        .from("users")
+        .update({
+
+            password:hashedPassword
+
+        })
+        .eq("id", user.id);
+
+    if(updateError){
+
+        return res.json({
+
+            success:false,
+
+            message:
+            "Failed to update password."
 
         });
 

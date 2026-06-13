@@ -22,6 +22,12 @@
     </button>
 </div>
 
+<button
+class="logout-btn"
+onclick="changePassword()">
+    Change Password
+</button>
+
 <div class="card">
 
 <h1>Admin Panel</h1>
@@ -426,6 +432,87 @@ function logout(){
 
     window.location.href =
     "/login.html";
+
+}
+
+async function changePassword(){
+
+    const currentPassword =
+    prompt(
+        "Enter your current password"
+    );
+
+    if(!currentPassword){
+
+        return;
+
+    }
+
+    const newPassword =
+    prompt(
+        "Enter your new password"
+    );
+
+    if(!newPassword){
+
+        return;
+
+    }
+
+    if(newPassword.length < 4){
+
+        alert(
+            "Password must be at least 4 characters."
+        );
+
+        return;
+
+    }
+
+    const response =
+    await fetch(
+        "/change-password",
+        {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":
+                "application/json"
+            },
+
+            body:JSON.stringify({
+
+                id:user.id,
+
+                currentPassword:
+                currentPassword,
+
+                newPassword:
+                newPassword
+
+            })
+
+        }
+    );
+
+    const data =
+    await response.json();
+
+    if(data.success){
+
+        alert(
+            "Password updated successfully."
+        );
+
+    }else{
+
+        alert(
+            data.message ||
+            "Password change failed."
+        );
+
+    }
 
 }
 
