@@ -114,7 +114,13 @@ function renderUsers(){
 
                 <div>
 
-                    <strong>${user.name}</strong>
+                    <strong>
+
+                    ${user.name}
+
+                    (#${user.id.toString().slice(-4)})
+
+                    </strong>
 
                     <p>
                     ${user.minutes} Minutes

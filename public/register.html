@@ -24,8 +24,13 @@
     </p>
 
     <input
-    id="name"
-    placeholder="Full Name">
+    id="firstName"
+    placeholder="First Name">
+
+    <input
+    id="lastName"
+    placeholder="Last Name">
+
 
     <input
     id="email"
@@ -76,10 +81,18 @@ function register(){
 
     }
 
-    const name =
+    const firstName =
     document.getElementById(
-        "name"
+        "firstName"
     ).value.trim();
+
+    const lastName =
+    document.getElementById(
+        "lastName"
+    ).value.trim();
+
+    const name =
+    firstName + " " + lastName;
 
     const email =
     document.getElementById(
@@ -91,13 +104,13 @@ function register(){
         "password"
     ).value.trim();
 
-    if(!name){
+        if(!firstName || !lastName){
 
-    alert(
-        "Please enter your name."
-    );
+        alert(
+            "Please enter your first and last name."
+        );
 
-    return;
+        return;
 
     }
 
@@ -145,8 +158,7 @@ function register(){
         "pendingUser",
         JSON.stringify({
 
-            name:
-            document.getElementById("name").value,
+            name:name,
 
             email:
             document.getElementById("email").value,
