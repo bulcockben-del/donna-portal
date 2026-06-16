@@ -31,6 +31,8 @@ onclick="changePassword()">
 
 <h1 id="welcome"></h1>
 
+<p id="customerId"></p>
+
 <p>Remaining Minutes</p>
 
 <div
@@ -184,6 +186,14 @@ document.getElementById("welcome")
 "Welcome Back " +
 user.name +
 " 👋";
+
+document.getElementById(
+    "customerId"
+).innerText =
+
+"Customer ID: #" +
+
+user.id.toString().slice(-4);
 
 document.getElementById(
     "lastDate"
